@@ -27,3 +27,18 @@ describe('/api/topics', () => {
     return request(app).get('/api/nonsense').expect(404);
   });
 });
+describe('/api', () => {
+  test('get object describing all existing endponts', () => {
+    return request(app)
+      .get('/api')
+      .expect(200)
+      .then(({ body }) => {
+        expect(typeof body).toBe('object');
+        for (const key in body) {
+          expect(typeof body[key].description).toBe('string');
+          expect(body[key].queries.length >= 0).toBe(true);
+          expect(typeof body[key].exampleResponse).toBe('object');
+        }
+      });
+  });
+});
