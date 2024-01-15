@@ -37,5 +37,8 @@
         }
       ]
     }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "an article object, which should have the following properties "
   }
 }
