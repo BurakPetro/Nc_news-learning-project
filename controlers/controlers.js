@@ -1,4 +1,8 @@
-const { fetchTopics, fetchAllEndponts } = require('../modules/module');
+const {
+  fetchTopics,
+  fetchAllEndponts,
+  fetchArticlById,
+} = require('../modules/module');
 
 exports.getTopics = (req, res, next) => {
   fetchTopics()
@@ -11,6 +15,16 @@ exports.getTopics = (req, res, next) => {
 };
 exports.getAllEndpoints = (req, res, next) => {
   fetchAllEndponts()
+    .then((result) => {
+      res.status(200).send(result);
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+exports.getArticleById = (req, res, next) => {
+  const { article_id } = req.params;
+  fetchArticlById(article_id)
     .then((result) => {
       res.status(200).send(result);
     })
