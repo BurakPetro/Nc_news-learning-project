@@ -2,7 +2,6 @@ const {
   fetchTopics,
   fetchAllEndponts,
   fetchArticlById,
-  fetchArticles,
 } = require('../modules/module');
 
 exports.getTopics = (req, res, next) => {
