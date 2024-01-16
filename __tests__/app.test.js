@@ -96,3 +96,48 @@ describe('/api/articles', () => {
       });
   });
 });
+describe('/api/articles/:article_id/comments', () => {
+  test('GET all coments on aproptiate article id', () => {
+    return request(app)
+      .get('/api/articles/3/comments')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).toBe(2);
+        body.forEach((element) => {
+          expect(typeof element.comment_id).toBe('number');
+          expect(typeof element.body).toBe('string');
+          expect(typeof element.article_id).toBe('number');
+          expect(typeof element.author).toBe('string');
+          expect(typeof element.votes).toBe('number');
+          expect(typeof element.created_at).toBe('string');
+        });
+      });
+  });
+  test('GET 400 on invalid article id, msg Bad request', () => {
+    return request(app)
+      .get('/api/articles/nonsens/comments')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad request');
+      });
+  });
+  test('GET 404 on valid but non existent article id', () => {
+    return request(app)
+      .get('/api/articles/99999/comments')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('article does not exist');
+      });
+  });
+  test('comments should be sortet from the most resent comment', () => {
+    return request(app)
+      .get('/api/articles/1/comments')
+      .expect(200)
+      .then(({ body }) => {
+        body.forEach((element) => {
+          let start = body[0].created_at;
+          expect(element.created_at <= start).toBe(true);
+        });
+      });
+  });
+});

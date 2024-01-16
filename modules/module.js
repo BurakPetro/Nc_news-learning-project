@@ -32,3 +32,21 @@ exports.fetchArticles = () => {
       return rows;
     });
 };
+exports.fetchCommentsOnArticle = (article_id) => {
+  return db
+    .query('SELECT * FROM articles WHERE article_id = $1;', [article_id])
+    .then((result) => {
+      if (!result.rows[0]) {
+        return Promise.reject({ msg: 'article does not exist' });
+      } else {
+        return db
+          .query(
+            `SELECT * FROM comments WHERE article_id = $1 ORDER BY comments.created_at DESC ;`,
+            [article_id]
+          )
+          .then((x) => {
+            return x.rows;
+          });
+      }
+    });
+};
