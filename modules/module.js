@@ -23,3 +23,12 @@ exports.fetchArticlById = (article_id) => {
       return result.rows[0];
     });
 };
+exports.fetchArticles = () => {
+  return db
+    .query(
+      `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at,articles.article_img_url, COUNT(comment_id) AS comment_count,COALESCE(SUM(comments.votes),'0') AS votes FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id GROUP BY articles.article_id ORDER BY articles.created_at DESC;`
+    )
+    .then(({ rows }) => {
+      return rows;
+    });
+};

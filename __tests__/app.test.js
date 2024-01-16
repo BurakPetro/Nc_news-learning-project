@@ -77,3 +77,22 @@ describe('/api/articles/:article_id', () => {
       });
   });
 });
+describe('/api/articles', () => {
+  test('', () => {
+    return request(app)
+      .get('/api/articles')
+      .expect(200)
+      .then(({ body }) => {
+        body.forEach((element) => {
+          expect(typeof element.article_id).toBe('number');
+          expect(typeof element.title).toBe('string');
+          expect(typeof element.topic).toBe('string');
+          expect(typeof element.author).toBe('string');
+          expect(typeof element.created_at).toBe('string');
+          expect(typeof element.votes).toBe('string');
+          expect(typeof element.article_img_url).toBe('string');
+          expect(typeof element.comment_count).toBe('string');
+        });
+      });
+  });
+});
