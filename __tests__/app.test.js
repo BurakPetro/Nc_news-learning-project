@@ -89,7 +89,7 @@ describe('/api/articles', () => {
           expect(typeof element.topic).toBe('string');
           expect(typeof element.author).toBe('string');
           expect(typeof element.created_at).toBe('string');
-          expect(typeof element.votes).toBe('string');
+          expect(typeof element.votes).toBe('number');
           expect(typeof element.article_img_url).toBe('string');
           expect(typeof element.comment_count).toBe('string');
         });
