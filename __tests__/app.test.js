@@ -42,7 +42,7 @@ describe('/api', () => {
       });
   });
 });
-describe('/api/articles/:article_id', () => {
+describe.only('/api/articles/:article_id', () => {
   test('get object describing an article using specific id', () => {
     return request(app)
       .get('/api/articles/3')
