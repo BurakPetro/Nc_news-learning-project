@@ -3,6 +3,7 @@ const {
   fetchAllEndponts,
   fetchArticlById,
   fetchArticles,
+  fetchCommentsOnArticle,
 } = require('../modules/module');
 
 exports.getTopics = (req, res, next) => {
@@ -27,7 +28,6 @@ exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
   fetchArticlById(article_id)
     .then((result) => {
-      console.log(result);
       res.status(200).send(result);
     })
     .catch((err) => {
@@ -44,4 +44,13 @@ exports.getArticles = (req, res, next) => {
       next(err);
     });
 };
-exports.getCommentsOnArticle = (req, res, next) => {};
+exports.getCommentsOnArticle = (req, res, next) => {
+  const { article_id } = req.params;
+  fetchCommentsOnArticle(article_id)
+    .then((result) => {
+      res.status(200).send(result);
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
