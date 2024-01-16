@@ -42,22 +42,6 @@ describe('/api', () => {
       });
   });
 });
-describe('/api/articles', () => {
-  test('', () => {
-    return request(app)
-      .get('/api/articles')
-      .expect(200)
-      .then(({ body }) => {
-        body.forEach((element) => {
-          expect(typeof element.article_id).toBe('number');
-          expect(typeof element.title).toBe('string');
-          expect(typeof element.topic).toBe('string');
-          expect(typeof element.author).toBe('string');
-          expect(typeof element.created_at).toBe('string');
-          expect(typeof element.votes).toBe('string');
-          expect(typeof element.article_img_url).toBe('string');
-          expect(typeof element.comment_count).toBe('string');
-        });
 describe('/api/articles/:article_id', () => {
   test('get object describing an article using specific id', () => {
     return request(app)
@@ -90,6 +74,9 @@ describe('/api/articles/:article_id', () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe('Bad request');
+      });
+  });
+});
 describe('/api/articles', () => {
   test('', () => {
     return request(app)
@@ -108,4 +95,4 @@ describe('/api/articles', () => {
         });
       });
   });
-})})
+});
