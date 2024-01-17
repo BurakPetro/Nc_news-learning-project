@@ -67,3 +67,23 @@ exports.insertComentOnArticle = (article_id, comment) => {
       }
     });
 };
+exports.changeVotesOnArticle = (article_id, vote) => {
+  return db
+    .query('SELECT * FROM articles WHERE article_id = $1;', [article_id])
+    .then((article) => {
+      if (!article.rows[0]) {
+        return Promise.reject({ msg: 'article does not exist' });
+      } else if (!vote.inc_votes) {
+        return { statuscode: 200, article: article };
+      } else {
+        return db
+          .query(
+            'UPDATE articles SET votes =$1 WHERE article_id = $2 RETURNING *;',
+            [article.rows[0].votes + vote.inc_votes, article_id]
+          )
+          .then((modifaedArticle) => {
+            return modifaedArticle;
+          });
+      }
+    });
+};
