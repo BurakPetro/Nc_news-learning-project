@@ -5,6 +5,7 @@ const {
   fetchArticles,
   fetchCommentsOnArticle,
   insertComentOnArticle,
+  changeVotesOnArticle,
 } = require('../modules/module');
 
 exports.getTopics = (req, res, next) => {
@@ -62,6 +63,22 @@ exports.postComentOnArticle = (req, res, next) => {
   insertComentOnArticle(article_id, comment)
     .then((result) => {
       res.status(201).send({ comment: result, msg: 'comment was added' });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+exports.patchVoteOnArticle = (req, res, next) => {
+  const { article_id } = req.params;
+  const vote = req.body;
+  changeVotesOnArticle(article_id, vote)
+    .then((result) => {
+      if (result.statuscode === 200) {
+        return res.status(200).send({ article: result.article.rows[0] });
+      }
+      res
+        .status(201)
+        .send({ msg: 'votes been modifaed', article: result.rows[0] });
     })
     .catch((err) => {
       next(err);

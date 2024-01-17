@@ -175,13 +175,69 @@ describe('POST /api/articles/:article_id/comments', () => {
         expect(body.msg).toBe('article does not exist');
       });
   });
-  test('GET 400 on invalid article id, msg Bad request', () => {
+  test('POST 400 on invalid article id, msg Bad request', () => {
     return request(app)
       .post('/api/articles/nonsens/comments')
       .send({ username: 'icellusedkars', body: 'some comment' })
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe('Bad request');
+      });
+  });
+});
+describe('patch /api/articles/:article_id', () => {
+  test('patch, statuscode 201, answer with article which has new value of votes and all other values same as before', () => {
+    return request(app)
+      .patch('/api/articles/1')
+      .send({ inc_votes: 1 })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.msg).toBe('votes been modifaed');
+        expect(body.article.article_id).toBe(1);
+        expect(body.article.title).toBe('Living in the shadow of a great man');
+        expect(body.article.topic).toBe('mitch');
+        expect(body.article.created_at).toBe('2020-07-09T20:11:00.000Z');
+        expect(body.article.votes).toBe(101);
+        expect(body.article.article_img_url).toBe(
+          'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+        );
+      });
+  });
+  test('patch, statuscode 201, check votes value on -55 passed', () => {
+    return request(app)
+      .patch('/api/articles/2')
+      .send({ inc_votes: -55 })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.article.votes).toBe(-55);
+      });
+  });
+  test('patch 400 on invalid article id, msg Bad request', () => {
+    return request(app)
+      .patch('/api/articles/nonsens')
+      .send({ inc_votes: 1 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad request');
+      });
+  });
+  test('patch 404 on valid but non existent article id', () => {
+    return request(app)
+      .patch('/api/articles/99999')
+      .send({ inc_votes: 1 })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('article does not exist');
+      });
+  });
+  test('patch 200 on empty request object', () => {
+    return request(app)
+      .patch('/api/articles/1')
+      .send({})
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article.article_id).toBe(1);
+        expect(body.article.votes).toBe(100);
       });
   });
 });
