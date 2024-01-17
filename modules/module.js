@@ -1,5 +1,5 @@
 const db = require('../db/connection');
-
+const format = require('pg-format');
 const fs = require('fs/promises');
 
 exports.fetchTopics = () => {
@@ -44,9 +44,26 @@ exports.fetchCommentsOnArticle = (article_id) => {
             `SELECT * FROM comments WHERE article_id = $1 ORDER BY comments.created_at DESC ;`,
             [article_id]
           )
-          .then((x) => {
-            return x.rows;
+          .then((result1) => {
+            return result1.rows;
           });
+      }
+    });
+};
+exports.insertComentOnArticle = (article_id, comment) => {
+  return db
+    .query('SELECT * FROM articles WHERE article_id = $1;', [article_id])
+    .then((result) => {
+      if (!result.rows[0]) {
+        return Promise.reject({ msg: 'article does not exist' });
+      } else {
+        const insertCommentsForQuery = format(
+          'INSERT INTO comments (body, author, article_id, votes) VALUES %L RETURNING *;',
+          [[comment.body, comment.username, article_id, 0]]
+        );
+        return db.query(insertCommentsForQuery).then((result) => {
+          return result.rows[0];
+        });
       }
     });
 };

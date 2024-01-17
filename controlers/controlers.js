@@ -4,6 +4,7 @@ const {
   fetchArticlById,
   fetchArticles,
   fetchCommentsOnArticle,
+  insertComentOnArticle,
 } = require('../modules/module');
 
 exports.getTopics = (req, res, next) => {
@@ -49,6 +50,18 @@ exports.getCommentsOnArticle = (req, res, next) => {
   fetchCommentsOnArticle(article_id)
     .then((result) => {
       res.status(200).send(result);
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+exports.postComentOnArticle = (req, res, next) => {
+  const { article_id } = req.params;
+  const comment = req.body;
+
+  insertComentOnArticle(article_id, comment)
+    .then((result) => {
+      res.status(201).send({ comment: result, msg: 'comment was added' });
     })
     .catch((err) => {
       next(err);

@@ -141,3 +141,47 @@ describe('/api/articles/:article_id/comments', () => {
       });
   });
 });
+describe('POST /api/articles/:article_id/comments', () => {
+  test('post comment with appropriete article id, user name, comment body', () => {
+    return request(app)
+      .post('/api/articles/2/comments')
+      .send({ username: 'icellusedkars', body: 'some comment' })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.msg).toBe('comment was added');
+        expect(typeof body.comment.comment_id).toBe('number');
+        expect(body.comment.body).toBe('some comment');
+        expect(body.comment.article_id).toBe(2);
+        expect(body.comment.author).toBe('icellusedkars');
+        expect(body.comment.votes).toBe(0);
+        expect(typeof body.comment.created_at).toBe('string');
+      });
+  });
+  test('in case wrong user name shoud recive 400 and msg User not found', () => {
+    return request(app)
+      .post('/api/articles/2/comments')
+      .send({ username: 'nonsens', body: 'some comment' })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('User not found');
+      });
+  });
+  test('Post 404 on valid but non existent article id', () => {
+    return request(app)
+      .post('/api/articles/99999/comments')
+      .send({ username: 'icellusedkars', body: 'some comment' })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('article does not exist');
+      });
+  });
+  test('GET 400 on invalid article id, msg Bad request', () => {
+    return request(app)
+      .post('/api/articles/nonsens/comments')
+      .send({ username: 'icellusedkars', body: 'some comment' })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad request');
+      });
+  });
+});
