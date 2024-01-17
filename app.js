@@ -6,6 +6,7 @@ const {
   getArticleById,
   getArticles,
   getCommentsOnArticle,
+  postComentOnArticle,
 } = require('./controlers/controlers');
 
 app.use(express.json());
@@ -15,11 +16,14 @@ app.get('/api', getAllEndpoints);
 app.get('/api/articles/:article_id', getArticleById);
 app.get('/api/articles', getArticles);
 app.get('/api/articles/:article_id/comments', getCommentsOnArticle);
+app.post('/api/articles/:article_id/comments', postComentOnArticle);
 
 app.use((err, req, res, next) => {
   //console.log(err);
   if (err.code === '22P02') {
     res.status(400).send({ msg: 'Bad request' });
+  } else if (err.code === '23503') {
+    res.status(400).send({ msg: 'User not found' });
   } else {
     next(err);
   }
