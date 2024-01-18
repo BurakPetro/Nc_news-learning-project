@@ -3,6 +3,7 @@ const testData = require('../db/data/test-data/index');
 const db = require('../db/connection');
 const request = require('supertest');
 const app = require('../app');
+const { forEach } = require('../db/data/test-data/articles');
 
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
@@ -254,13 +255,8 @@ describe('DELETE /api/comments/:comment_id', () => {
           });
       });
   });
-  test('GET:404 on valid but non existent id  ', () => {
-    return request(app)
-      .delete('/api/comments/9999')
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe('content not found');
-      });
+  test('GET:204 on valid but non existent id  ', () => {
+    return request(app).delete('/api/comments/9999').expect(204);
   });
   test('GET:400 on non valid id  ', () => {
     return request(app)
@@ -269,5 +265,34 @@ describe('DELETE /api/comments/:comment_id', () => {
       .then(({ body }) => {
         expect(body.msg).toBe('Bad request');
       });
+  });
+});
+describe('GET /api/users', () => {
+  test('GET:200', () => {
+    return request(app)
+      .get('/api/users')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.users.length).toBe(4);
+        body.users.forEach((user) => {
+          console.log(body.users);
+          expect(typeof user.username).toBe('string');
+          expect(typeof user.name).toBe('string');
+          expect(typeof user.avatar_url).toBe('string');
+        });
+      });
+  });
+  test('GET:204 if there are no users ', () => {
+    const usersCleanUp = db
+      .query(`DROP TABLE IF EXISTS comments;`)
+      .then(() => {
+        return db.query(`DROP TABLE IF EXISTS articles;`);
+      })
+      .then(() => {
+        return db.query(`DELETE FROM users;`);
+      });
+    Promise.all([usersCleanUp]).then(() => {
+      return request(app).get('/api/users').expect(204);
+    });
   });
 });

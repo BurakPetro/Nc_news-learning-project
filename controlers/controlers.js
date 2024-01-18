@@ -7,6 +7,7 @@ const {
   insertComentOnArticle,
   changeVotesOnArticle,
   removeCommentById,
+  fetchUsers,
 } = require('../modules/module');
 
 exports.getTopics = (req, res, next) => {
@@ -90,6 +91,15 @@ exports.deleteComentById = (req, res, next) => {
   removeCommentById(comment_id)
     .then(() => {
       res.status(204).send({ msg: 'no content' });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+exports.getUsers = (req, res, next) => {
+  fetchUsers()
+    .then((users) => {
+      res.status(200).send({ users });
     })
     .catch((err) => {
       next(err);
