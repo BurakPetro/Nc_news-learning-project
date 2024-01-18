@@ -275,6 +275,7 @@ describe('GET /api/users', () => {
       .then(({ body }) => {
         expect(body.users.length).toBe(4);
         body.users.forEach((user) => {
+          console.log(body.users);
           expect(typeof user.username).toBe('string');
           expect(typeof user.name).toBe('string');
           expect(typeof user.avatar_url).toBe('string');
