@@ -88,13 +88,15 @@ exports.changeVotesOnArticle = (article_id, vote) => {
     });
 };
 exports.removeCommentById = (comment_id) => {
-  return db
-    .query('DELETE FROM comments WHERE comment_id = $1 RETURNING *;', [
-      comment_id,
-    ])
-    .then((comment) => {
-      if (!comment.rows[0]) {
-        return Promise.reject({ msg: 'content not found' });
-      }
-    });
+  return db.query('DELETE FROM comments WHERE comment_id = $1 RETURNING *;', [
+    comment_id,
+  ]);
+};
+exports.fetchUsers = () => {
+  return db.query(`SELECT * FROM users;`).then(({ rows }) => {
+    if (!rows[0]) {
+      return Promise.reject({ msg: 'content not found' });
+    }
+    return rows;
+  });
 };
