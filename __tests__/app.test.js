@@ -241,3 +241,33 @@ describe('patch /api/articles/:article_id', () => {
       });
   });
 });
+describe('DELETE /api/comments/:comment_id', () => {
+  test('GET:204 to check comment with specific id is not in database ', () => {
+    return request(app)
+      .delete('/api/comments/13')
+      .expect(204)
+      .then(() => {
+        return db
+          .query('SELECT * FROM comments WHERE comment_id = 13;')
+          .then((comment) => {
+            expect(comment.rows.length === 0).toBe(true);
+          });
+      });
+  });
+  test('GET:404 on valid but non existent id  ', () => {
+    return request(app)
+      .delete('/api/comments/9999')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('content not found');
+      });
+  });
+  test('GET:400 on non valid id  ', () => {
+    return request(app)
+      .delete('/api/comments/nonsens')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad request');
+      });
+  });
+});
