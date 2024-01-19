@@ -8,6 +8,7 @@ const {
   changeVotesOnArticle,
   removeCommentById,
   fetchUsers,
+  fetchArticlesByTopic,
 } = require('../modules/module');
 
 exports.getTopics = (req, res, next) => {
@@ -40,13 +41,24 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  fetchArticles()
-    .then((result) => {
-      res.status(200).send(result);
-    })
-    .catch((err) => {
-      next(err);
-    });
+  const { topic } = req.query;
+  if (topic) {
+    fetchArticlesByTopic(topic)
+      .then((articles) => {
+        res.status(200).send(articles);
+      })
+      .catch((err) => {
+        next(err);
+      });
+  } else {
+    fetchArticles()
+      .then((articles) => {
+        res.status(200).send(articles);
+      })
+      .catch((err) => {
+        next(err);
+      });
+  }
 };
 exports.getCommentsOnArticle = (req, res, next) => {
   const { article_id } = req.params;

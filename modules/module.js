@@ -12,12 +12,13 @@ exports.fetchAllEndponts = () => {
     return JSON.parse(String(result));
   });
 };
+
 exports.fetchArticlById = (article_id) => {
   return db
     .query('SELECT * FROM articles WHERE article_id = $1;', [article_id])
     .then((result) => {
-      if (!result.rows[0]) {
-        return Promise.reject({ msg: 'article does not exist' });
+      if (result.rowCount === 0) {
+        return Promise.reject({ msg: 'content not found' });
       }
 
       return result.rows[0];
@@ -94,9 +95,16 @@ exports.removeCommentById = (comment_id) => {
 };
 exports.fetchUsers = () => {
   return db.query(`SELECT * FROM users;`).then(({ rows }) => {
-    if (!rows[0]) {
-      return Promise.reject({ msg: 'content not found' });
-    }
     return rows;
   });
+};
+exports.fetchArticlesByTopic = (topic) => {
+  return db
+    .query('SELECT * FROM articles WHERE topic = $1;', [topic])
+    .then(({ rows }) => {
+      if (!rows[0]) {
+        return Promise.reject({ msg: 'content not found' });
+      }
+      return rows;
+    });
 };
