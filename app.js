@@ -35,15 +35,16 @@ app.use((err, req, res, next) => {
   }
 });
 app.use((err, req, res, next) => {
-  //console.log(err);
+  console.log(err);
   if (err.msg === 'content not found') {
     res.status(204).send();
   } else {
     next(err);
   }
 });
+
 app.use((err, req, res, next) => {
-  //console.log(err);
+  console.log(err);
   if (err.msg === 'article does not exist') {
     res.status(404).send({ msg: err.msg });
   } else {
