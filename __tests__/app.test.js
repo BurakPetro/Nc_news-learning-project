@@ -3,7 +3,6 @@ const testData = require('../db/data/test-data/index');
 const db = require('../db/connection');
 const request = require('supertest');
 const app = require('../app');
-const { forEach } = require('../db/data/test-data/articles');
 
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
@@ -61,13 +60,8 @@ describe('/api/articles/:article_id', () => {
         );
       });
   });
-  test('responds with msg article does not exists if providet with valid but non existent id', () => {
-    return request(app)
-      .get('/api/articles/3333')
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe('article does not exist');
-      });
+  test('responds with 204 if providet with valid but non existent id', () => {
+    return request(app).get('/api/articles/3333').expect(204);
   });
   test('responds with an appropriate status and error message when given an invalid id', () => {
     return request(app)
@@ -79,7 +73,7 @@ describe('/api/articles/:article_id', () => {
   });
 });
 describe('/api/articles', () => {
-  test('', () => {
+  test('should return an array of specific objects', () => {
     return request(app)
       .get('/api/articles')
       .expect(200)
@@ -95,6 +89,28 @@ describe('/api/articles', () => {
           expect(typeof element.comment_count).toBe('string');
         });
       });
+  });
+  test('TASK 11 GET:200 and specific article', () => {
+    return request(app)
+      .get('/api/articles?topic=cats')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body[0].topic).toBe('cats');
+      });
+  });
+  test('TASK 11 GET:200 and all articles with topic mitch', () => {
+    return request(app)
+      .get('/api/articles?topic=mitch')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).toBe(12);
+        body.forEach((article) => {
+          expect(article.topic).toBe('mitch');
+        });
+      });
+  });
+  test('TASK 11 GET:204 on /api/articles? when query adresses to non existing row', () => {
+    return request(app).get('/api/articles?topic=nonsens').expect(204);
   });
 });
 describe('/api/articles/:article_id/comments', () => {
@@ -275,7 +291,6 @@ describe('GET /api/users', () => {
       .then(({ body }) => {
         expect(body.users.length).toBe(4);
         body.users.forEach((user) => {
-          console.log(body.users);
           expect(typeof user.username).toBe('string');
           expect(typeof user.name).toBe('string');
           expect(typeof user.avatar_url).toBe('string');

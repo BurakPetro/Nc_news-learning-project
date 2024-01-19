@@ -37,7 +37,7 @@ app.use((err, req, res, next) => {
 app.use((err, req, res, next) => {
   //console.log(err);
   if (err.msg === 'content not found') {
-    res.status(204);
+    res.status(204).send();
   } else {
     next(err);
   }
