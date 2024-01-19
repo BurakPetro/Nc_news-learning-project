@@ -63,6 +63,14 @@ describe('/api/articles/:article_id', () => {
   test('responds with 204 if providet with valid but non existent id', () => {
     return request(app).get('/api/articles/3333').expect(204);
   });
+  test('TASK 12 check comment_counter to be total count of all coments on article', () => {
+    return request(app)
+      .get('/api/articles/1')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment_count).toBe('11');
+      });
+  });
   test('responds with an appropriate status and error message when given an invalid id', () => {
     return request(app)
       .get('/api/articles/nonsens')
