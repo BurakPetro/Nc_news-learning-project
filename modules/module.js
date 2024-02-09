@@ -1,5 +1,5 @@
 const db = require('../db/connection');
-//const format = require('pg-format');
+const format = require('pg-format');
 const fs = require('fs/promises');
 
 exports.fetchTopics = () => {
