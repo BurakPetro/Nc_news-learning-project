@@ -112,3 +112,5 @@ exports.fetchArticlesByTopic = (topic) => {
       return rows;
     });
 };
+
+//just to test commit
