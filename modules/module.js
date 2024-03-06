@@ -1,6 +1,6 @@
-const db = require('../db/connection');
-const format = require('pg-format');
-const fs = require('fs/promises');
+const db = require("../db/connection");
+const format = require("pg-format");
+const fs = require("fs/promises");
 
 exports.fetchTopics = () => {
   return db.query(`SELECT * FROM topics;`).then(({ rows }) => {
@@ -8,7 +8,7 @@ exports.fetchTopics = () => {
   });
 };
 exports.fetchAllEndponts = () => {
-  return fs.readFile(`./endpoints.json`, 'utf8').then((result) => {
+  return fs.readFile(`./endpoints.json`, "utf8").then((result) => {
     return JSON.parse(String(result));
   });
 };
@@ -16,13 +16,13 @@ exports.fetchAllEndponts = () => {
 exports.fetchArticlById = (article_id) => {
   return db
     .query(
-      'SELECT articles.*, COUNT(comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id;',
+      "SELECT articles.*, COUNT(comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id;",
       [article_id]
     )
 
     .then((result) => {
       if (result.rowCount === 0) {
-        return Promise.reject({ msg: 'content not found' });
+        return Promise.reject({ msg: "content not found" });
       }
 
       return result.rows[0];
@@ -39,10 +39,10 @@ exports.fetchArticles = () => {
 };
 exports.fetchCommentsOnArticle = (article_id) => {
   return db
-    .query('SELECT * FROM articles WHERE article_id = $1;', [article_id])
+    .query("SELECT * FROM articles WHERE article_id = $1;", [article_id])
     .then((result) => {
       if (!result.rows[0]) {
-        return Promise.reject({ msg: 'article does not exist' });
+        return Promise.reject({ msg: "article does not exist" });
       } else {
         return db
           .query(
@@ -57,13 +57,23 @@ exports.fetchCommentsOnArticle = (article_id) => {
 };
 exports.insertComentOnArticle = (article_id, comment) => {
   return db
-    .query('SELECT * FROM articles WHERE article_id = $1;', [article_id])
+    .query("SELECT * FROM articles WHERE article_id = $1;", [article_id])
     .then((result) => {
       if (!result.rows[0]) {
-        return Promise.reject({ msg: 'article does not exist' });
+        return Promise.reject({ msg: "article does not exist" });
       } else {
+        /* const insertCommentsForQuery =
+          `INSERT INTO comments (body, author, article_id, votes) VALUES(` +
+          comment.body +
+          `, ` +
+          comment.username +
+          ", " +
+          article_id +
+          ", 0) RETURNING *;";
+        console.log(insertCommentsForQuery);*/
+
         const insertCommentsForQuery = format(
-          'INSERT INTO comments (body, author, article_id, votes) VALUES %L RETURNING *;',
+          "INSERT INTO comments (body, author, article_id, votes) VALUES %L RETURNING *;",
           [[comment.body, comment.username, article_id, 0]]
         );
         return db.query(insertCommentsForQuery).then((result) => {
@@ -74,16 +84,16 @@ exports.insertComentOnArticle = (article_id, comment) => {
 };
 exports.changeVotesOnArticle = (article_id, vote) => {
   return db
-    .query('SELECT * FROM articles WHERE article_id = $1;', [article_id])
+    .query("SELECT * FROM articles WHERE article_id = $1;", [article_id])
     .then((article) => {
       if (!article.rows[0]) {
-        return Promise.reject({ msg: 'article does not exist' });
+        return Promise.reject({ msg: "article does not exist" });
       } else if (!vote.inc_votes) {
         return { statuscode: 200, article: article };
       } else {
         return db
           .query(
-            'UPDATE articles SET votes =$1 WHERE article_id = $2 RETURNING *;',
+            "UPDATE articles SET votes =$1 WHERE article_id = $2 RETURNING *;",
             [article.rows[0].votes + vote.inc_votes, article_id]
           )
           .then((modifaedArticle) => {
@@ -93,7 +103,7 @@ exports.changeVotesOnArticle = (article_id, vote) => {
     });
 };
 exports.removeCommentById = (comment_id) => {
-  return db.query('DELETE FROM comments WHERE comment_id = $1 RETURNING *;', [
+  return db.query("DELETE FROM comments WHERE comment_id = $1 RETURNING *;", [
     comment_id,
   ]);
 };
@@ -104,13 +114,11 @@ exports.fetchUsers = () => {
 };
 exports.fetchArticlesByTopic = (topic) => {
   return db
-    .query('SELECT * FROM articles WHERE topic = $1;', [topic])
+    .query("SELECT * FROM articles WHERE topic = $1;", [topic])
     .then(({ rows }) => {
       if (!rows[0]) {
-        return Promise.reject({ msg: 'content not found' });
+        return Promise.reject({ msg: "content not found" });
       }
       return rows;
     });
 };
-
-//just to test commit

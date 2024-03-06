@@ -9,7 +9,7 @@ const {
   removeCommentById,
   fetchUsers,
   fetchArticlesByTopic,
-} = require('../modules/module');
+} = require("../modules/module");
 
 exports.getTopics = (req, res, next) => {
   fetchTopics()
@@ -76,7 +76,7 @@ exports.postComentOnArticle = (req, res, next) => {
 
   insertComentOnArticle(article_id, comment)
     .then((result) => {
-      res.status(201).send({ comment: result, msg: 'comment was added' });
+      res.status(201).send({ comment: result, msg: "comment was added" });
     })
     .catch((err) => {
       next(err);
@@ -92,7 +92,7 @@ exports.patchVoteOnArticle = (req, res, next) => {
       }
       res
         .status(201)
-        .send({ msg: 'votes been modifaed', article: result.rows[0] });
+        .send({ msg: "votes been modifaed", article: result.rows[0] });
     })
     .catch((err) => {
       next(err);
@@ -102,7 +102,7 @@ exports.deleteComentById = (req, res, next) => {
   const { comment_id } = req.params;
   removeCommentById(comment_id)
     .then(() => {
-      res.status(204).send({ msg: 'no content' });
+      res.status(204).send({ msg: "no content" });
     })
     .catch((err) => {
       next(err);
